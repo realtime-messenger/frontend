@@ -1,5 +1,5 @@
 import {useContext, useState} from 'react';
-import classes from '../Shared.module.css'
+import classes from "../Shared.module.css";
 import {useValidate} from "../../../../hooks/useValidate";
 import {Link} from "react-router-dom";
 import {AuthContext} from "../../../../context/contexts";
@@ -101,7 +101,7 @@ export const PRegistration = () => {
 	return (
 		<div className={classes.fullScreenContainer}>
 			<img
-				src="/logo.webp"
+				src="/messenger.svg"
 				alt="Логотип"
 			/>
 			<Input

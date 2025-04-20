@@ -1,6 +1,6 @@
 import axios from "axios";
 import {API_HOST} from "../../config";
-import {getAccessToken, getRefreshToken} from "../../utils/localStorageManager";
+import {getRefreshToken} from "../../utils/localStorageManager";
 import { JwtResponse } from "../../types/schemas/auth";
 
 
@@ -21,7 +21,7 @@ export const signinRequest = async (
 	}
 
 	const response = await axios.post(
-		API_HOST + "/api/v1/auth",
+		API_HOST + "/api/v1/auth/registration",
 		data
 	)
 	return response.data

@@ -70,7 +70,7 @@ export const PLogin = () => {
 	return (
 		<div className={classes.fullScreenContainer}>
 			<img
-				src="/logo.webp"
+				src="/messenger.svg"
 				alt="Логотип"
 			/>
 
