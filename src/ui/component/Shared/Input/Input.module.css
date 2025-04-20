@@ -1,0 +1,43 @@
+.container {
+	--inside-out: 16px;
+
+	position: relative;
+	padding-top: var(--inside-out);
+	padding-bottom: var(--inside-out);
+
+	margin-bottom: calc(var(--inside-out) * -1 - 6px);
+
+}
+
+.input {
+	border: 2px solid lightgray;
+	border-radius: 8px;
+	padding: 16px;
+	width: 100%;
+	outline: none;
+	transition: border-color 300ms;
+
+	background: var(--backgound-color);
+
+}
+
+.input:focus {
+	border: 2px solid gray;
+}
+
+.label {
+	user-select: none;
+	position: absolute;
+	left: calc(var(--inside-out) + 2px);
+	top: 10px;
+	background: var(--backgound-color);
+	font-size: 16px;
+}
+
+.error {
+	user-select: none;
+	color: red;
+	margin-top: 4px;
+
+	overflow: hidden;
+}

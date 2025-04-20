@@ -1,0 +1,33 @@
+.fullScreenContainer {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.inputField {
+    min-width: 240px;
+    width: 30%;
+    max-width: 400px;
+}
+
+.goToText {
+    margin: 8px;
+    user-select: none;
+    text-decoration: none;
+    color: black;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    font-size: 12px;
+}
+
+.goToText div {
+    color: var(--attention-text)
+}
+

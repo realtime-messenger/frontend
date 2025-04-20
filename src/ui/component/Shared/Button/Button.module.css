@@ -1,0 +1,47 @@
+.container {
+    --inside-out: 16px;
+
+    position: relative;
+    padding-top: var(--inside-out);
+    padding-bottom: var(--inside-out);
+
+    margin-bottom: calc(var(--inside-out) * -1);
+}
+
+.button {
+    border: none;
+    border-radius: 8px;
+    padding: 16px;
+    width: 100%;
+    outline: none;
+
+    cursor: pointer;
+
+    transition: color 300ms, opacity 300ms, background-color 300ms;
+}
+
+.button.black {
+    background-color: var(--black);
+    color: white;
+}
+
+.button.black:active {
+    color: gray;
+}
+
+.button.white {
+    background-color: white;
+    color: var(--black);
+}
+
+.button.white:active {
+    background-color: gray;
+}
+
+.button.bold {
+    font-weight: bold;
+}
+
+.button:focus {
+    opacity: 0.9;
+}
