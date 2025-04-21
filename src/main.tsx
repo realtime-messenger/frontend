@@ -4,13 +4,14 @@ import './index.css'
 import {SingleRoute} from "./types";
 import {checkIfLoggedIn, delay, refreshAccessToken, timeToExpireAccess} from "./utils/utils.ts";
 import {BrowserRouter, Route, Routes} from "react-router-dom";
-import { AuthContext } from './context/contexts';
+import {AuthContext, WsContext} from './context/contexts';
 import {
   loggedInDesktopRoutes,
   loggedInMobileRoutes,
   loggedOutDesktopRoutes,
   loggedOutMobileRoutes
 } from "./router/router.tsx";
+import {connectWebsocket} from "./api/routes/websocket.ts";
 
 const getRoutes = (isLogged: boolean, isMobile: boolean) => {
   if (isMobile) {
@@ -45,6 +46,8 @@ export const App = () => {
   const [isLogged, setIsLogged] = useState(checkIfLoggedIn());
   const [isMobile, setIsMobile] = useState(false);
 
+  const [client, setClient] = useState<object | null>(null)
+
   const routes: SingleRoute[] = getRoutes(isLogged, isMobile);
 
   useEffect(() => {
@@ -67,14 +70,25 @@ export const App = () => {
     refresher()
   }, [isLogged])
 
+  useEffect(() => {
+    if (isLogged) {
+      console.log("trying to connect ws")
+      const newWebSocketClient = connectWebsocket();
+      setClient(newWebSocketClient)
+    }
+
+  }, [isLogged]);
+
 
   return (
     <AuthContext.Provider value={{isLogged, setIsLogged}}>
-      <BrowserRouter>
-        {
-          renderRoutes(routes)
-        }
-      </BrowserRouter>
+      <WsContext.Provider value={{client}}>
+        <BrowserRouter>
+          {
+            renderRoutes(routes)
+          }
+        </BrowserRouter>
+      </WsContext.Provider>
     </AuthContext.Provider>
   );
 }

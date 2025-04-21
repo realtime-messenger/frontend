@@ -48,10 +48,12 @@ table {
 /*shared styles*/
 
 :root {
-  --backgound-color: #FAFAFA;
+  --backgound-color: #FFFFFF;
   --attention-text: #420CFF;
   --accent-color: #420CFF;
   --black: #151718;
+
+  --dimmed-gray: #F1F1F1;
 }
 
 * {

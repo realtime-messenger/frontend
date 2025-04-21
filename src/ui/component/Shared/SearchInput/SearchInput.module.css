@@ -1,0 +1,19 @@
+.input {
+    width: 100%;
+    height: 100%;
+    padding: 4px 8px;
+    border: 2px solid;
+    border-radius: 24px;
+    outline: none;
+
+    border-color: var(--dimmed-gray);
+    background: var(--dimmed-gray);
+
+    cursor: text;
+    transition: 300ms background-color;
+}
+
+.input:focus{
+    background: white;
+}
+

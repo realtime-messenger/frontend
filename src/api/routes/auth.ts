@@ -29,17 +29,17 @@ export const signinRequest = async (
 
 
 export const loginRequest = async (
-	email: string,
+	username: string,
 	password: string
 ): Promise<JwtResponse> => {
 
 	const data = {
-		email: email,
+		username: username,
 		password: password,
 	}
 
 	const response = await axios.post(
-		API_HOST + "/api/v1/auth/jwt/login",
+		API_HOST + "/api/v1/auth/login",
 		data
 	)
 	return response.data
@@ -53,7 +53,7 @@ export const refreshRequest = async (): Promise<JwtResponse> => {
 	}
 
 	const response = await axios.post(
-		API_HOST + "/api/v1/auth/jwt/refresh",
+		API_HOST + "/api/v1/auth/refresh",
 		data
 	)
 	return response.data

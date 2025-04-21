@@ -1,16 +1,17 @@
 import {Navigate} from "react-router-dom";
 import {PLogin} from "../ui/layout/shared/PLogin/PLogin.tsx";
 import {PRegistration} from "../ui/layout/shared/PRegistration/PRegistration.tsx";
+import PChat from "../ui/layout/desktop/PChat/PChat.tsx";
 
 export const loggedInDesktopRoutes = [
-	// {
-	// 	path: "/courses/all",
-	// 	element: (<PAllCourses/>)
-	// },
-	// {
-	// 	path: "/*",
-	// 	element: (<Navigate to="/courses/all" replace={true}/>)
-	// }
+	{
+		path: "/chat",
+		element: (<PChat/>)
+	},
+	{
+		path: "/*",
+		element: (<Navigate to="/chat" replace={true}/>)
+	}
 ]
 
 export const loggedOutDesktopRoutes = [

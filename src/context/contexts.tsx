@@ -8,7 +8,17 @@ interface AuthContextType {
 export const AuthContext = createContext<AuthContextType>(
 	{
 		isLogged: false,
-		setIsLogged: (isLogged: boolean): void => {
-		}
+		setIsLogged: () => {}
+	}
+);
+
+
+interface WsContextType {
+	client: object | null
+}
+
+export const WsContext = createContext<WsContextType>(
+	{
+		client: null
 	}
 );
