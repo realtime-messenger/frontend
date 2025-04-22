@@ -1,5 +1,4 @@
 .chatList {
-    /*background: red;*/
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
@@ -12,8 +11,20 @@
     height: 60px;
     width: 100%;
     padding: 4px;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
 }
 
 .chatEntry:hover {
     background: var(--dimmed-gray);
+}
+
+.userInitialText {
+    margin: 4px;
+    flex: 1;
+    height: 100%;
+    font-size: 16px;
+    user-select: none;
 }

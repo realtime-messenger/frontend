@@ -11,14 +11,3 @@ export const AuthContext = createContext<AuthContextType>(
 		setIsLogged: () => {}
 	}
 );
-
-
-interface WsContextType {
-	client: object | null
-}
-
-export const WsContext = createContext<WsContextType>(
-	{
-		client: null
-	}
-);

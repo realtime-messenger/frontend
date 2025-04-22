@@ -1,18 +1,45 @@
 import classes from "./SearchBar.module.css"
-import Input from "../Input/Input.tsx";
 import SearchInput from "../SearchInput/SearchInput.tsx";
-import {useState} from "react";
+import {FC} from "react";
 
-const SearchBar = () => {
 
-	const [isSearching, setIsSearching] = useState<boolean>(false);
-	const [searchPrompt, setSearchPrompt] = useState<string>("");
+interface SearchBarProps {
+	setIsSearching: (value: boolean) => void
+	searchPrompt: string
+	setSearchPrompt: (value: string) => void
+}
+
+const SearchBar: FC<SearchBarProps> = (
+	{
+		setIsSearching,
+		searchPrompt,
+		setSearchPrompt
+	}
+) => {
+
+	const processState = (focus: boolean) => {
+		if (searchPrompt != '') {
+			setIsSearching(true)
+			return
+		}
+		setIsSearching(focus)
+	}
+
 
 	return (
-		<div className={classes.searchBar}>
+		<div
+			onKeyDown={
+				(e) => {
+					if (e.code === "Escape") {
+						setSearchPrompt("")
+						setIsSearching(false)
+					}
+				}
+			}
+			className={classes.searchBar}>
 			<SearchInput
-				onFocus={() => setIsSearching(true)}
-				onBlur={() => setIsSearching(false)}
+				onFocus={() => processState(true)}
+				onBlur={() => processState(false)}
 				value={searchPrompt}
 				setValue={(value) => setSearchPrompt(value)}
 			/>

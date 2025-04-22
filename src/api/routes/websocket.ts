@@ -6,8 +6,11 @@ export const connectWebsocket = () => {
 	const accessToken = getAccessToken()
 	const brokerURL =  WS_HOST + "/ws?token=" + accessToken
 
-	const ws = new WebSocket(brokerURL)
-	const client = Stomp.over(ws);
+	const client = Stomp.over(
+		function () {
+			return new WebSocket(brokerURL)
+		}
+	);
 
 	client.heartbeat.outgoing = PING_OUTGOING;
 	client.heartbeat.incoming = PING_INGOING;
@@ -15,6 +18,5 @@ export const connectWebsocket = () => {
 	client.debug = () => {}
 
 	client.activate()
-
 	return client
 }
