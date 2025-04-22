@@ -1,7 +1,7 @@
-import {CompatClient} from "@stomp/stompjs";
+import {Client} from "@stomp/stompjs";
 
 export const sendMessageChat = (
-	client: CompatClient,
+	client: Client,
 	chatId: number,
 	text: string
 ) => {
@@ -16,7 +16,7 @@ export const sendMessageChat = (
 }
 
 export const sendMessagePrivate = (
-	client: CompatClient,
+	client: Client,
 	userId: number,
 	text: string
 ) => {

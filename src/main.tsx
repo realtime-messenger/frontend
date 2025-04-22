@@ -1,4 +1,4 @@
-import {StrictMode, useEffect, useRef, useState} from 'react'
+import {StrictMode, useEffect, useState} from 'react'
 import {createRoot} from 'react-dom/client'
 import './index.css'
 import {SingleRoute} from "./types";
@@ -11,8 +11,8 @@ import {
   loggedOutDesktopRoutes,
   loggedOutMobileRoutes
 } from "./router/router.tsx";
-import {connectWebsocket} from "./api/routes/websocket.ts";
-import {CompatClient} from "@stomp/stompjs";
+import {StompSessionProvider} from "react-stomp-hooks";
+import {getSTOMPurl} from "./api/routes/websocket.ts";
 
 const getRoutes = (isLogged: boolean, isMobile: boolean) => {
   if (isMobile) {
@@ -72,11 +72,15 @@ export const App = () => {
 
   return (
     <AuthContext.Provider value={{isLogged, setIsLogged}}>
-      <BrowserRouter>
-        {
-          renderRoutes(routes)
-        }
-      </BrowserRouter>
+      <StompSessionProvider
+        url={getSTOMPurl()}
+      >
+        <BrowserRouter>
+          {
+            renderRoutes(routes)
+          }
+        </BrowserRouter>
+      </StompSessionProvider>
     </AuthContext.Provider>
   );
 }

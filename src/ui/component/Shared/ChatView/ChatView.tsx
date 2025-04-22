@@ -2,10 +2,9 @@ import classes from "./ChatView.module.css"
 import {ChatResponse} from "../../../../types/schemas/chat.ts";
 import {MessageExtendedResponse} from "../../../../types/schemas/message.ts";
 import {UserResponse} from "../../../../types/schemas/user.ts";
-import {FC, useContext, useEffect, useState} from "react";
+import {FC, useEffect, useState} from "react";
 import {sendMessageChat, sendMessagePrivate} from "../../../../api/messaging/sendMessage.ts";
-import {CompatClient} from "@stomp/stompjs";
-
+import {useStompClient} from "react-stomp-hooks";
 
 
 // Если выбран уже существующий чат то используется chat и messages
@@ -109,7 +108,6 @@ interface ChatViewProps {
 	chat: ChatResponse | null
 	messages: MessageExtendedResponse[] | null
 	onBack: () => void
-	client: CompatClient
 }
 
 const ChatView: FC<ChatViewProps> = (
@@ -118,9 +116,10 @@ const ChatView: FC<ChatViewProps> = (
 		chat,
 		messages,
 		onBack,
-		client
 	}
 ) => {
+
+	const client = useStompClient();
 
 	const getTitle = () => {
 		if (chat !== null) {
@@ -134,6 +133,11 @@ const ChatView: FC<ChatViewProps> = (
 
 	const onSend = (text: string) => {
 		console.log("SENDING FUCIKNG MESSAGE")
+
+		if (client === undefined) {
+			console.log("ASDASD")
+			return;
+		}
 
 		console.log(client.connected)
 

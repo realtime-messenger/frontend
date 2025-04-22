@@ -1,7 +1,7 @@
 import classes from "./PChat.module.css"
 import ChatView from "../../../component/Shared/ChatView/ChatView.tsx";
 import ChatBar from "../../../component/Shared/ChatBar/ChatBar.tsx";
-import {useEffect, useRef, useState} from "react";
+import {useEffect, useState} from "react";
 import {MessageExtendedResponse} from "../../../../types/schemas/message.ts";
 import {useFetching} from "../../../../hooks/useFetching.ts";
 import {ChatResponse} from "../../../../types/schemas/chat.ts";
@@ -9,10 +9,10 @@ import {getChats} from "../../../../api/routes/chat.ts";
 import {getLastMessages} from "../../../../api/routes/message.ts";
 import {MyIdResponse, UserResponse} from "../../../../types/schemas/user.ts";
 import {getMyId} from "../../../../api/routes/user.ts";
-import {connectWebsocket} from "../../../../api/routes/websocket.ts";
-import {CompatClient} from "@stomp/stompjs";
+import {useStompClient} from "react-stomp-hooks";
 
 const PChat = () => {
+	const stompClient = useStompClient();
 
 	const [chats, setChats] = useState<ChatResponse[]>([]);
 	const [messages, setMessages] = useState<MessageExtendedResponse[]>([]);
@@ -22,26 +22,24 @@ const PChat = () => {
 
 	const [myId, setMyId] = useState<number | null>(null);
 
-	const [fetchChats, isChatsLoading, chatsError, resetChatsError] = useFetching(async () => {
+	const [fetchChats] = useFetching(async () => {
 			const fetchedChats: ChatResponse[] = await getChats();
 			setChats([...fetchedChats])
 		}
 	)
 
-	const [fetchLastMessages, isLastMessagesLoading, lastMessagesError, resetLastMessagesError] = useFetching(async () => {
+	const [fetchLastMessages] = useFetching(async () => {
 			const fetchedMessages: MessageExtendedResponse[] = await getLastMessages();
 			setMessages([...messages, ...fetchedMessages])
 		}
 	)
 
-	const [fetchMyId, isMyIdLoading, myIdError, resetMyIdError] = useFetching(async () => {
+	const [fetchMyId] = useFetching(async () => {
 			const myIdResp: MyIdResponse = await getMyId();
 
 			setMyId(myIdResp.id)
 		}
 	)
-
-	const [client, setClient] = useState<null | CompatClient>(null)
 
 	useEffect(() => {
 		fetchChats().then()
@@ -54,24 +52,16 @@ const PChat = () => {
 			return;
 		}
 
-		const client = connectWebsocket()
-
-
-		client.onConnect = () => {
-			setClient(client)
-
-			client.subscribe(
-				"/queue/user/" + myId,
-				(e) => {
-					console.log(e)
-					console.log(e.body)
-				}
-			)
-
-			console.log(client)
-			console.log(client.connected)
+		if (stompClient === undefined) {
+			return;
 		}
 
+		stompClient.subscribe(
+			"/queue/user/" + myId,
+			(event) => {
+				console.log(event)
+			}
+		)
 
 	}, [myId]);
 
@@ -113,7 +103,6 @@ const PChat = () => {
 						setChoosedUser(null)
 					}
 				}
-				client={client!}
 			/>
 		</div>
 	);

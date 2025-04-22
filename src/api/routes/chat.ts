@@ -3,14 +3,11 @@ import axios from "axios";
 import {API_HOST} from "../../config.ts";
 import {ChatResponse} from "../../types/schemas/chat.ts";
 
-export const getChats = async (pattern: string): Promise<ChatResponse[]> => {
+export const getChats = async (): Promise<ChatResponse[]> => {
 
 	const accessToken = getAccessToken()
 
 	const config = {
-		params: {
-			query: pattern
-		},
 		headers: {
 			Authorization: `Bearer ${accessToken}`,
 		}

@@ -20,3 +20,11 @@ export const connectWebsocket = () => {
 	client.activate()
 	return client
 }
+
+
+export const getSTOMPurl = () => {
+	const accessToken = getAccessToken()
+	const brokerURL =  WS_HOST + "/ws?token=" + accessToken
+
+	return brokerURL
+}
