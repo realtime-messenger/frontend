@@ -5,12 +5,10 @@ import {UserResponse} from "../../../../types/schemas/user.ts";
 import {FC, useEffect, useState} from "react";
 import {sendMessageChat, sendMessagePrivate} from "../../../../api/messaging/sendMessage.ts";
 import {useStompClient} from "react-stomp-hooks";
+import Message from "../Message/Message.tsx";
+import ReactionPopup from "../ReactionPopup/ReactionPopup.tsx";
+import {setReaction} from "../../../../api/messaging/reaction.ts";
 
-
-// Если выбран уже существующий чат то используется chat и messages
-// Если выбрал user то при отправке сообщения будет создан новый чат и соответственно будет получен ивент о создании нового чата
-// Вне chat view нужно замечать что новый чат - приватный и interlocutor в нём - это пользователь user и использовать этот чат
-// по основному сценарию
 
 
 interface TopBarProps {
@@ -51,6 +49,18 @@ const TextMessageInput: FC<TextMessageInputProps> = (
 
 	const [text, setText] = useState<string>("");
 
+	const onSubmit = () => {
+		onSend(text)
+		setText("")
+	}
+
+	const getButtonClasses = () => {
+		if (text === "") {
+			return classes.buttonDisabled
+		}
+		return ""
+	}
+
 	return (
 		<div className={classes.messageInput}>
 			<input
@@ -62,15 +72,20 @@ const TextMessageInput: FC<TextMessageInputProps> = (
 				value={text}
 				type="text"
 				placeholder={"Лучшее время для письма - сейчас..."}
+				onKeyDown={
+					(e) => {
+						if (e.code == "Enter") {
+							onSubmit()
+						}
+					}
+				}
 			/>
 			<button
 				onClick={
-					() => {
-						console.log("ASDASDASDASDASD")
-						onSend(text)
-						setText("")
-					}
+					() => onSubmit()
 				}
+				disabled={text == ""}
+				className={getButtonClasses()}
 			>
 				{">"}
 			</button>
@@ -79,26 +94,111 @@ const TextMessageInput: FC<TextMessageInputProps> = (
 }
 
 interface MessagesProps {
+	chat?: ChatResponse | null
 	messages?: MessageExtendedResponse[] | null
+	onLoadPrevious?: (chatId: number, skip: number, limit: number) => void | null
 }
+
+interface PosType {
+	x: number
+	y: number
+}
+
 
 const Messages: FC<MessagesProps> =  (
 	{
-		messages
+		messages,
+		onLoadPrevious,
+		chat
 	}
 ) => {
 
+	const client = useStompClient();
+
+
+	const [menuOpen, setMenuOpen] = useState<boolean>(false)
+	const [pos, setPos] = useState<PosType>({x: 0, y: 0})
+
+	const [choosedMessageId, setChoosedMessageId] = useState<number | null>(null)
+
+	const sortedMessages = [...messages!].sort(
+		(a, b) => {
+			return a.id - b.id
+		}
+	)
+
+	const onReactionChoose = (reaction: string) => {
+		if (client === undefined) {
+			return;
+		}
+		if (client === null) {
+			return
+		}
+
+		setReaction(
+			client,
+			choosedMessageId!,
+			reaction
+		)
+
+	}
 
 	return (
-		<div className={classes.messagesView}>
-			{
-				messages?.map(
-					(message: MessageExtendedResponse) =>  (
-						<div>{message.text}</div>
+		<>
+			<div className={classes.messagesView}>
+			<span
+				onClick={() => {
+					if (onLoadPrevious !== null && onLoadPrevious !== undefined) {
+						onLoadPrevious(chat!.id, sortedMessages!.length, 20)
+					}
+				}}
+				className={classes.loadPrevious}>
+				{"Загрузить предыдущие сообщения"}
+			</span>
+				{
+					sortedMessages?.map(
+						(message: MessageExtendedResponse) =>  (
+							<Message
+								key={message.id}
+								user={message.user}
+								isRead={message.isRead}
+								dateCreated={message.dateCreated}
+								text={message.text}
+								reactions={message.reactions}
+								onContextMenu={
+									(e) => {
+										e.preventDefault()
+										e.stopPropagation()
+										setPos(
+											{
+												x: e.pageX,
+												y: e.pageY
+											}
+										)
+										setMenuOpen(true)
+										setChoosedMessageId(message.id)
+									}
+								}
+							/>
+						)
 					)
+				}
+			</div>
+			{
+				menuOpen && (
+					<ReactionPopup
+						x={pos.x}
+						y={pos.y}
+						onReactionChoose={
+							(reaction) => onReactionChoose(reaction)
+						}
+						onClose={
+							() => setMenuOpen(false)
+						}
+					/>
 				)
 			}
-		</div>
+		</>
 	)
 }
 
@@ -108,6 +208,7 @@ interface ChatViewProps {
 	chat: ChatResponse | null
 	messages: MessageExtendedResponse[] | null
 	onBack: () => void
+	onLoadPrevious: (chatId: number, skip: number, limit: number) => void
 }
 
 const ChatView: FC<ChatViewProps> = (
@@ -116,6 +217,7 @@ const ChatView: FC<ChatViewProps> = (
 		chat,
 		messages,
 		onBack,
+		onLoadPrevious
 	}
 ) => {
 
@@ -123,7 +225,12 @@ const ChatView: FC<ChatViewProps> = (
 
 	const getTitle = () => {
 		if (chat !== null) {
-			return chat.title
+			if (chat.type === "PRIVATE") {
+				return `${chat.interlocutor.firstName} ${chat.interlocutor.lastName}`
+			}
+			else {
+				return chat.title
+			}
 		}
 		else if (user !== null) {
 			return `${user.firstName} ${user.lastName}`
@@ -132,22 +239,15 @@ const ChatView: FC<ChatViewProps> = (
 	}
 
 	const onSend = (text: string) => {
-		console.log("SENDING FUCIKNG MESSAGE")
-
 		if (client === undefined) {
-			console.log("ASDASD")
 			return;
 		}
 
-		console.log(client.connected)
-
 		if (client === null) {
-			console.log("CLIENT APPREARED TO BE NULL")
 			return
 		}
 
 		if (user !== null) {
-			console.log("GONNA SEND MESSSAGE")
 			sendMessagePrivate(
 				client,
 				user.id,
@@ -155,7 +255,6 @@ const ChatView: FC<ChatViewProps> = (
 			)
 		}
 		if (chat !== null) {
-			console.log("GONNA SEND MESSSAGE")
 			sendMessageChat(
 				client,
 				chat.id,
@@ -186,7 +285,11 @@ const ChatView: FC<ChatViewProps> = (
 				chat !== null &&
 				(
 					<>
-						<Messages messages={messages}/>
+						<Messages
+							chat={chat}
+							messages={messages}
+							onLoadPrevious={onLoadPrevious}
+						/>
 					</>
 				)
 			}

@@ -65,9 +65,8 @@
     margin-right: 8px;
     flex: 1;
     overflow: hidden;
-
-
 }
+
 
 .messageInput button {
     aspect-ratio: 1;
@@ -78,10 +77,30 @@
     color: white;
     margin: 4px;
     cursor: pointer;
+    transition: background-color 300ms;
+}
+.messageInput button.buttonDisabled {
+    cursor: not-allowed;
+    background: gray;
 }
 
 .messagesView {
     flex: 1;
     width: 100%;
     overflow: scroll;
+}
+
+.loadPrevious {
+    border: 1px solid gray;
+    border-radius: 16px;
+    padding: 16px;
+    display: block;
+    text-align: center;
+    background: #80808040;
+
+    margin: 16px;
+
+    user-select: none;
+
+    cursor: pointer;
 }
