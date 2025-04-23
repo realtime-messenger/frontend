@@ -13,6 +13,7 @@ import {
 } from "./router/router.tsx";
 import {StompSessionProvider} from "react-stomp-hooks";
 import {getSTOMPurl} from "./api/routes/websocket.ts";
+import {getUserId} from "./utils/localStorageManager.ts";
 
 const getRoutes = (isLogged: boolean, isMobile: boolean) => {
   if (isMobile) {
@@ -46,6 +47,7 @@ const renderRoutes = (routes: SingleRoute[]) => (
 export const App = () => {
   const [isLogged, setIsLogged] = useState(checkIfLoggedIn());
   const [isMobile, setIsMobile] = useState(false);
+  const [userId, setUserId] = useState<number>(-1);
 
   const routes: SingleRoute[] = getRoutes(isLogged, isMobile);
 
@@ -62,6 +64,9 @@ export const App = () => {
           await refreshAccessToken()
         }
         setIsLogged(true)
+        setUserId(
+          getUserId()
+        )
         await delay(15000)
       }
       setIsLogged(false)
@@ -71,7 +76,15 @@ export const App = () => {
 
 
   return (
-    <AuthContext.Provider value={{isLogged, setIsLogged}}>
+    <AuthContext.Provider
+      value={
+        {
+          isLogged,
+          setIsLogged,
+          userId
+        }
+      }
+    >
       <StompSessionProvider
         url={getSTOMPurl()}
       >

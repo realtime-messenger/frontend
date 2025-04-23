@@ -5,7 +5,7 @@ import {Link} from "react-router-dom";
 import {AuthContext} from "../../../../context/contexts";
 import {useFetching} from "../../../../hooks/useFetching";
 import {signinRequest} from "../../../../api/routes/auth";
-import {setAccessToken, setRefreshToken} from "../../../../utils/localStorageManager";
+import {setAccessToken, setRefreshToken, setUserId} from "../../../../utils/localStorageManager";
 import Input from "../../../component/Shared/Input/Input.tsx";
 import Button from "../../../component/Shared/Button/Button.tsx";
 import Modal from "../../../component/Shared/Modal/Modal.tsx";
@@ -17,6 +17,7 @@ import {
 	validatePasswordRepeat,
 	validateUsername
 } from "../../../../utils/validators.ts";
+import {parseJwt} from "../../../../utils/utils.ts";
 
 export const PRegistration = () => {
 
@@ -39,6 +40,9 @@ export const PRegistration = () => {
 
 			setAccessToken(responseSignIn.accessToken)
 			setRefreshToken(responseSignIn.refreshToken)
+
+			const userId = parseJwt(responseSignIn.accessToken).sub;
+			setUserId(userId)
 
 			setIsLogged(true)
 

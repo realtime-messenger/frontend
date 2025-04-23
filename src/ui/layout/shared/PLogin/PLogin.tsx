@@ -5,13 +5,14 @@ import {Link} from "react-router-dom";
 import {AuthContext} from "../../../../context/contexts";
 import {useFetching} from "../../../../hooks/useFetching";
 import {loginRequest} from "../../../../api/routes/auth";
-import {setAccessToken, setRefreshToken} from "../../../../utils/localStorageManager";
+import {setAccessToken, setRefreshToken, setUserId} from "../../../../utils/localStorageManager";
 import {validatePassword, validateUsername} from "../../../../utils/validators.ts";
 import Input from "../../../component/Shared/Input/Input.tsx";
 import Button from "../../../component/Shared/Button/Button.tsx";
 import Modal from "../../../component/Shared/Modal/Modal.tsx";
 import Attention from "../../../component/Shared/Attention/Attention.tsx";
 import SmallLoader from "../../../component/Shared/Loader/SmallLoader.tsx";
+import {parseJwt} from "../../../../utils/utils.ts";
 
 export const PLogin = () => {
 
@@ -22,6 +23,9 @@ export const PLogin = () => {
 
 			setAccessToken(response.accessToken)
 			setRefreshToken(response.refreshToken)
+
+			const userId = parseJwt(response.accessToken).sub;
+			setUserId(userId)
 
 			setIsLogged(true)
 		}
