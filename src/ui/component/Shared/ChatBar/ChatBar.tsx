@@ -76,6 +76,7 @@ const ChatBar: FC<ChatBarProps> = (
 							chats.map(
 								(chat: ChatResponse) => (
 									<ChatEntry
+										key={chat.id}
 										onClick={
 											() => {
 												onChatChoose(chat)
@@ -100,6 +101,7 @@ const ChatBar: FC<ChatBarProps> = (
 							users.map(
 								(user: UserResponse) => (
 									<UserEntry
+										key={user.id}
 										onClick={
 											() => {
 												onUserChoose(user)
