@@ -1,0 +1,31 @@
+.reactionPopup {
+	position: absolute;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+
+	background: white;
+	padding: 8px;
+
+	border-radius: 8px;
+
+	box-shadow: rgba(0,0,0,0.5)  0 0 10px;
+
+	gap: 8px;
+}
+
+.reaction {
+	font-size: 16px;
+	user-select: none;
+
+	padding: 4px;
+
+	transition: font-size 150ms linear, padding 150ms linear;
+
+}
+
+.reaction:hover {
+	font-size: 24px;
+	padding: 0;
+}
