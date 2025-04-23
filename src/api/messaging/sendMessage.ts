@@ -6,9 +6,6 @@ export const sendMessageChat = (
 	text: string
 ) => {
 
-	console.log("sending mesage chat")
-	console.log(client)
-
 	client.publish({
 		destination: "/app/send-message-chat",
 		body: JSON.stringify({'chatId': chatId, 'text': text})
@@ -20,10 +17,6 @@ export const sendMessagePrivate = (
 	userId: number,
 	text: string
 ) => {
-
-	console.log("sending mesage")
-	console.log(client)
-	console.log(client.connected)
 
 	client.publish({
 		destination: "/app/send-message-private",

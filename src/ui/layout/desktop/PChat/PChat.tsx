@@ -10,6 +10,8 @@ import {getLastMessages} from "../../../../api/routes/message.ts";
 import {MyIdResponse, UserResponse} from "../../../../types/schemas/user.ts";
 import {getMyId} from "../../../../api/routes/user.ts";
 import {useStompClient} from "react-stomp-hooks";
+import {NewMessageEvent} from "../../../../types/events/message.ts";
+import {NewChatEvent} from "../../../../types/events/chat.ts";
 
 const PChat = () => {
 	const stompClient = useStompClient();
@@ -41,11 +43,35 @@ const PChat = () => {
 		}
 	)
 
+	const onNewMessage = (event: NewMessageEvent) => {
+		setMessages((prevMessages) => {
+			return [...prevMessages, event.message];
+		});
+
+	}
+
+	const onNewChat = (event: NewChatEvent) => {
+
+		setChats((prevChats) => {
+			return [...prevChats, event.chat];
+		});
+
+		if (event.chat.type === "PRIVATE" && event.chat.interlocutor.id === choosedUser!.id) {
+			setChoosedChat(event.chat)
+			setChoosedUser(null)
+		}
+	}
+
 	useEffect(() => {
 		fetchChats().then()
 		fetchLastMessages().then()
 		fetchMyId().then()
 	}, []);
+
+
+	useEffect(() => {
+		console.log(messages)
+	}, [messages]);
 
 	useEffect(() => {
 		if (myId === null) {
@@ -57,9 +83,23 @@ const PChat = () => {
 		}
 
 		stompClient.subscribe(
-			"/queue/user/" + myId,
+			"/queue/user" + myId,
 			(event) => {
-				console.log(event)
+				const json = JSON.parse(event.body)
+
+				if (json.type === undefined) {
+					return
+				}
+				if (json.type === "NewMessage") {
+					onNewMessage(json)
+				}
+				if (json.type === "NewChat") {
+					onNewChat(json)
+				}
+				else {
+					console.log(json)
+				}
+
 			}
 		)
 
@@ -90,8 +130,8 @@ const PChat = () => {
 			<ChatBar
 				messages={messages}
 				chats={chats}
-				onChatChoose={(chat: ChatResponse) => setChoosedChat(chat)}
-				onUserChoose={(user: UserResponse) => setChoosedUser(user)}
+				onChatChoose={(chat: ChatResponse | null) => setChoosedChat(chat)}
+				onUserChoose={(user: UserResponse | null) => setChoosedUser(user)}
 			/>
 			<ChatView
 				user={choosedUser}

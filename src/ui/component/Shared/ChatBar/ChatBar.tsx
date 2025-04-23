@@ -11,8 +11,8 @@ import {MessageExtendedResponse} from "../../../../types/schemas/message.ts";
 interface ChatBarProps {
 	messages: MessageExtendedResponse[]
 	chats: ChatResponse[]
-	onUserChoose: (value: UserResponse) => void
-	onChatChoose: (value: ChatResponse) => void
+	onUserChoose: (value: UserResponse | null) => void
+	onChatChoose: (value: ChatResponse | null) => void
 }
 
 const ChatBar: FC<ChatBarProps> = (
@@ -29,7 +29,7 @@ const ChatBar: FC<ChatBarProps> = (
 
 	const [users, setUsers] = useState<UserResponse[]>([]);
 
-	const [fetchUsers, isUsersLoading, usersError, resetUsersError] = useFetching(async (query: string) => {
+	const [fetchUsers] = useFetching(async (query: string) => {
 			const fetchedUsers: UserResponse[] = await getUsers(query);
 			setUsers([...fetchedUsers])
 		}
@@ -103,6 +103,7 @@ const ChatBar: FC<ChatBarProps> = (
 										onClick={
 											() => {
 												onUserChoose(user)
+												onChatChoose(null)
 												setSearchPrompt("")
 												setIsSearching(false)
 											}

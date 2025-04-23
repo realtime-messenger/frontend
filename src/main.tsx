@@ -4,7 +4,7 @@ import './index.css'
 import {SingleRoute} from "./types";
 import {checkIfLoggedIn, delay, refreshAccessToken, timeToExpireAccess} from "./utils/utils.ts";
 import {BrowserRouter, Route, Routes} from "react-router-dom";
-import {AuthContext, WsContext} from './context/contexts';
+import {AuthContext} from './context/contexts';
 import {
   loggedInDesktopRoutes,
   loggedInMobileRoutes,
