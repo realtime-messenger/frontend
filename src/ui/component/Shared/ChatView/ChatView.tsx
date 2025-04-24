@@ -3,14 +3,15 @@ import {ChatResponse} from "../../../../types/schemas/chat.ts";
 import {MessageExtendedResponse} from "../../../../types/schemas/message.ts";
 import {UserResponse} from "../../../../types/schemas/user.ts";
 import {FC, useEffect, useState} from "react";
-import {sendMessageChat, sendMessagePrivate} from "../../../../api/messaging/sendMessage.ts";
+import {sendMessageChat, sendMessagePrivate} from "../../../../api/messaging/message.ts";
 import {useStompClient} from "react-stomp-hooks";
 import Message from "../Message/Message.tsx";
 import ReactionPopup from "../ReactionPopup/ReactionPopup.tsx";
 import {setReaction} from "../../../../api/messaging/reaction.ts";
+import DeleteMessagePopup from "../DeleteMessagePopup/DeleteMessagePopup.tsx";
 
 
-
+// ────────────────────────────────────── Top Bar ──────────────────────────────────────
 interface TopBarProps {
 	title: string,
 	onBack: () => void
@@ -21,7 +22,6 @@ const TopBar: FC<TopBarProps> = (
 		onBack
 	}
 ) => {
-
 
 	return (
 		<div className={classes.topBar}>
@@ -37,7 +37,7 @@ const TopBar: FC<TopBarProps> = (
 	)
 }
 
-
+// ─────────────────────────────────── Message Input ───────────────────────────────────
 interface TextMessageInputProps {
 	onSend: (value: string) => void
 }
@@ -93,6 +93,7 @@ const TextMessageInput: FC<TextMessageInputProps> = (
 	)
 }
 
+// ──────────────────────────────── List With Messages ─────────────────────────────────
 interface MessagesProps {
 	chat?: ChatResponse | null
 	messages?: MessageExtendedResponse[] | null
@@ -121,6 +122,8 @@ const Messages: FC<MessagesProps> =  (
 
 	const [choosedMessageId, setChoosedMessageId] = useState<number | null>(null)
 
+	const [messageToDelete, setMessageToDelete] = useState<MessageExtendedResponse | null>(null)
+
 	const sortedMessages = [...messages!].sort(
 		(a, b) => {
 			return a.id - b.id
@@ -140,7 +143,6 @@ const Messages: FC<MessagesProps> =  (
 			choosedMessageId!,
 			reaction
 		)
-
 	}
 
 	return (
@@ -179,6 +181,11 @@ const Messages: FC<MessagesProps> =  (
 										setChoosedMessageId(message.id)
 									}
 								}
+								onLongPress={
+									() => {
+										setMessageToDelete(message)
+									}
+								}
 							/>
 						)
 					)
@@ -198,10 +205,19 @@ const Messages: FC<MessagesProps> =  (
 					/>
 				)
 			}
+			{
+				messageToDelete !== null && (
+					<DeleteMessagePopup
+						message={messageToDelete}
+						onCancel={() => setMessageToDelete(null)}
+					/>
+				)
+			}
 		</>
 	)
 }
 
+// ───────────────────────────────────── Chat View ─────────────────────────────────────
 
 interface ChatViewProps {
 	user: UserResponse | null

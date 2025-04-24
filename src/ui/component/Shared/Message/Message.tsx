@@ -6,6 +6,7 @@ import {ReactionResponse} from "../../../../types/schemas/reactions.ts";
 import {AuthContext} from "../../../../context/contexts.tsx";
 import {deleteReaction} from "../../../../api/messaging/reaction.ts";
 import {useStompClient} from "react-stomp-hooks";
+import useLongPress from "../../../../hooks/useLongPress.ts";
 
 
 interface MessageProps {
@@ -15,6 +16,7 @@ interface MessageProps {
 	text: string
 	reactions: ReactionResponse[]
 	onContextMenu: (e: React.MouseEvent<HTMLElement>) => void
+	onLongPress: (e: React.MouseEvent<HTMLElement>) => void
 }
 
 
@@ -25,12 +27,14 @@ const Message: FC<MessageProps> = (
 		isRead,
 		text,
 		reactions,
-		onContextMenu
+		onContextMenu,
+		onLongPress
 	}
 ) => {
 	const client = useStompClient();
 
 	const {userId} = useContext(AuthContext)
+
 
 	const getMessageContainerClasses = () => {
 		const result = [classes.messageContainer]
@@ -87,9 +91,15 @@ const Message: FC<MessageProps> = (
 		)
 	}
 
+	const { handlers } = useLongPress((e) => onLongPress(e));
+
 	return (
 		<>
-			<div className={getMessageContainerClasses()}>
+			{/* @ts-expect-error some strange type error*/}
+			<div
+				className={getMessageContainerClasses()}
+				{...handlers}
+			>
 				<div
 					className={classes.message}
 					onContextMenu={(e) => onContextMenu(e)}
@@ -123,9 +133,6 @@ const Message: FC<MessageProps> = (
 					</div>
 				</div>
 			</div>
-
-
-
 		</>
 	);
 };

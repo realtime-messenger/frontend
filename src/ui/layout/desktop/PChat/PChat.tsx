@@ -9,7 +9,7 @@ import {getChats} from "../../../../api/routes/chat.ts";
 import {getLastMessages, getMessages} from "../../../../api/routes/message.ts";
 import {UserResponse} from "../../../../types/schemas/user.ts";
 import {useStompClient} from "react-stomp-hooks";
-import {NewMessageEvent} from "../../../../types/events/message.ts";
+import {DeleteMessageEvent, NewMessageEvent} from "../../../../types/events/message.ts";
 import {NewChatEvent} from "../../../../types/events/chat.ts";
 import {AuthContext} from "../../../../context/contexts.tsx";
 import {DeleteReactionEvent, NewReactionEvent} from "../../../../types/events/reaction.ts";
@@ -104,6 +104,22 @@ const PChat = () => {
 		});
 	}
 
+	const onDeleteMessage = (event: DeleteMessageEvent) => {
+		setMessages((prevMessages) => {
+			const newMessages: MessageExtendedResponse[] = []
+
+			prevMessages.forEach(
+				(message: MessageExtendedResponse) => {
+					if (message.id !== event.messageId) {
+						newMessages.push(message)
+					}
+				}
+			)
+
+			return newMessages
+		})
+	}
+
 	// ───────────────────────────────── Event Processors ─────────────────────────────────
 
 
@@ -112,10 +128,6 @@ const PChat = () => {
 		fetchLastMessages().then()
 	}, []);
 
-
-	useEffect(() => {
-		console.log(messages)
-	}, [messages]);
 
 	useEffect(() => {
 		if (stompClient === undefined) {
@@ -141,6 +153,9 @@ const PChat = () => {
 				}
 				if (json.type === "DeleteReaction") {
 					onDeleteReaction(json)
+				}
+				if (json.type === "DeleteMessage") {
+					onDeleteMessage(json)
 				}
 				else {
 					console.log(json)

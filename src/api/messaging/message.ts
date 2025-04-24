@@ -23,3 +23,16 @@ export const sendMessagePrivate = (
 		body: JSON.stringify({'userId': userId, 'text': text})
 	})
 }
+
+
+export const deleteMessage = (
+	client: Client,
+	messageId: number,
+	global: boolean
+) => {
+
+	client.publish({
+		destination: "/app/delete-message",
+		body: JSON.stringify({'messageId': messageId, 'global': global})
+	})
+}
