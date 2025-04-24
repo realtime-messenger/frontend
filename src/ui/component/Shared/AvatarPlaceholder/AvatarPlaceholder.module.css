@@ -16,4 +16,17 @@
 
     user-select: none;
 
+    position: relative;
+
+}
+
+.onlineIndicator {
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    border: 2px solid white;
+    background: yellowgreen;
+    border-radius: 100%;
+    right: 2px;
+    bottom: 2px;
 }
