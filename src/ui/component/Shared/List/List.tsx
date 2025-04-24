@@ -1,8 +1,9 @@
 import classes from './List.module.css'
-import {FC, ReactNode} from "react";
+import {FC, ReactNode, useContext} from "react";
 import AvatarPlaceholder from "../AvatarPlaceholder/AvatarPlaceholder.tsx"
 import {ChatResponse} from "../../../../types/schemas/chat.ts";
 import {MessageExtendedResponse} from "../../../../types/schemas/message.ts";
+import {AuthContext} from "../../../../context/contexts.tsx";
 
 interface UserEntryProps {
 	firstName: string
@@ -45,9 +46,24 @@ export const ChatEntry: FC<ChatEntryProps> = (
 		type,
 		title,
 		interlocutor,
-		onClick
+		onClick,
+		lastMessage
 	}
 ) => {
+
+	const {userId} = useContext(AuthContext)
+
+	const getSpanText = () => {
+		let result = ""
+		if (userId === lastMessage?.user.id) {
+			result += "Вы: "
+		}
+		else {
+			result += `${lastMessage?.user.firstName}: `
+		}
+		result += lastMessage?.text
+		return result
+	}
 
 	return (
 		<div
@@ -62,9 +78,17 @@ export const ChatEntry: FC<ChatEntryProps> = (
 							firstName={interlocutor.firstName}
 							lastName={interlocutor.lastName}
 						/>
-						<div className={classes.userInitialText}>
-							{`${interlocutor.firstName} ${interlocutor.lastName}`}
+
+						<div className={classes.verticalContainer}>
+							<div className={classes.userInitialText}>
+								{`${interlocutor.firstName} ${interlocutor.lastName}`}
+							</div>
+							<span>
+								{getSpanText()}
+							</span>
 						</div>
+
+
 					</>
 				)
 			}

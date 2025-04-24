@@ -28,12 +28,14 @@ const PChat = () => {
 
 	const [fetchChats] = useFetching(async () => {
 			const fetchedChats: ChatResponse[] = await getChats();
+			console.log('i have just fetched chats')
 			setChats([...fetchedChats])
 		}
 	)
 
 	const [fetchLastMessages] = useFetching(async () => {
 			const fetchedMessages: MessageExtendedResponse[] = await getLastMessages();
+		console.log('i have just fetched messeges')
 			setMessages([...messages, ...fetchedMessages])
 		}
 	)
@@ -137,30 +139,31 @@ const PChat = () => {
 		stompClient.subscribe(
 			"/topic/user" + userId,
 			(event) => {
-				const json = JSON.parse(event.body)
+				const parsedEvent = JSON.parse(event.body)
 
-				if (json.type === undefined) {
+				if (parsedEvent.type === undefined) {
 					return
 				}
-				if (json.type === "NewMessage") {
-					onNewMessage(json)
-				}
-				if (json.type === "NewChat") {
-					onNewChat(json)
-				}
-				if (json.type === "NewReaction") {
-					onNewReaction(json)
-				}
-				if (json.type === "DeleteReaction") {
-					onDeleteReaction(json)
-				}
-				if (json.type === "DeleteMessage") {
-					onDeleteMessage(json)
-				}
-				else {
-					console.log(json)
-				}
 
+				switch (parsedEvent.type) {
+					case "NewMessage":
+						onNewMessage(parsedEvent)
+						break;
+					case "NewChat":
+						onNewChat(parsedEvent)
+						break;
+					case "NewReaction":
+						onNewReaction(parsedEvent)
+						break;
+					case "DeleteReaction":
+						onDeleteReaction(parsedEvent)
+						break;
+					case "DeleteMessage":
+						onDeleteMessage(parsedEvent)
+						break;
+					default:
+						console.log(parsedEvent)
+				}
 			}
 		)
 

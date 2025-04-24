@@ -16,7 +16,7 @@ interface MessageProps {
 	text: string
 	reactions: ReactionResponse[]
 	onContextMenu: (e: React.MouseEvent<HTMLElement>) => void
-	onLongPress: (e: React.MouseEvent<HTMLElement>) => void
+	onLongPress: (e: React.MouseEvent) => void
 }
 
 

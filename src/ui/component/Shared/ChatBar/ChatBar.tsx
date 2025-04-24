@@ -50,13 +50,11 @@ const ChatBar: FC<ChatBarProps> = (
 
 
 	const getLastMessage = (chatId: number) => {
-		messages.forEach(
-			(message: MessageExtendedResponse) => {
-				if (message.chatId === chatId) {
-					return message
-				}
+		for (let i = 0; i < messages.length; i++) {
+			if (messages[i].chatId === chatId) {
+				return messages[i];
 			}
-		)
+		}
 		return null;
 	}
 

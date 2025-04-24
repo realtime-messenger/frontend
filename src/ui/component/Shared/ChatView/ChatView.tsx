@@ -9,6 +9,7 @@ import Message from "../Message/Message.tsx";
 import ReactionPopup from "../ReactionPopup/ReactionPopup.tsx";
 import {setReaction} from "../../../../api/messaging/reaction.ts";
 import DeleteMessagePopup from "../DeleteMessagePopup/DeleteMessagePopup.tsx";
+import {useMessageSort} from "../../../../hooks/useSorting.ts";
 
 
 // ────────────────────────────────────── Top Bar ──────────────────────────────────────
@@ -124,11 +125,7 @@ const Messages: FC<MessagesProps> =  (
 
 	const [messageToDelete, setMessageToDelete] = useState<MessageExtendedResponse | null>(null)
 
-	const sortedMessages = [...messages!].sort(
-		(a, b) => {
-			return a.id - b.id
-		}
-	)
+	const sortedMessages = useMessageSort(messages!)
 
 	const onReactionChoose = (reaction: string) => {
 		if (client === undefined) {

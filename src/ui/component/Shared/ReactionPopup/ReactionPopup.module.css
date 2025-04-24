@@ -18,11 +18,13 @@
 .reaction {
 	font-size: 16px;
 	user-select: none;
-
 	padding: 4px;
 
 	transition: font-size 150ms linear, padding 150ms linear;
 
+	font-family: "Noto Color Emoji", sans-serif !important;
+	font-weight: 400;
+	font-style: normal;
 }
 
 .reaction:hover {

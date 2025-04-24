@@ -87,7 +87,9 @@
 
     background: #E8F5FC;
 
-
+    font-family: "Noto Color Emoji", sans-serif !important;
+    font-weight: 400;
+    font-style: normal;
 }
 
 .reaction.active {
