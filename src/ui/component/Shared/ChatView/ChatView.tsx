@@ -2,7 +2,7 @@ import classes from "./ChatView.module.css"
 import {ChatResponse} from "../../../../types/schemas/chat.ts";
 import {MessageExtendedResponse} from "../../../../types/schemas/message.ts";
 import {UserResponse} from "../../../../types/schemas/user.ts";
-import {FC, useEffect, useState} from "react";
+import {FC, useEffect, useRef, useState} from "react";
 import {sendMessageChat, sendMessagePrivate} from "../../../../api/messaging/message.ts";
 import {useStompClient} from "react-stomp-hooks";
 import Message from "../Message/Message.tsx";
@@ -142,6 +142,13 @@ const Messages: FC<MessagesProps> =  (
 		)
 	}
 
+	const divRef = useRef(null);
+
+	useEffect(() => {
+		divRef.current.scrollIntoView({ behavior: 'smooth' });
+	}, [messages]);
+
+
 	return (
 		<>
 			<div className={classes.messagesView}>
@@ -187,6 +194,7 @@ const Messages: FC<MessagesProps> =  (
 						)
 					)
 				}
+				<div ref={divRef}/>
 			</div>
 			{
 				menuOpen && (
