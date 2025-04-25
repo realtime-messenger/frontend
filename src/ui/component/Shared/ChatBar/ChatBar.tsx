@@ -13,6 +13,7 @@ interface ChatBarProps {
 	chats: ChatResponse[]
 	onUserChoose: (value: UserResponse | null) => void
 	onChatChoose: (value: ChatResponse | null) => void
+	choosedChatId: number | undefined
 }
 
 const ChatBar: FC<ChatBarProps> = (
@@ -20,7 +21,8 @@ const ChatBar: FC<ChatBarProps> = (
 		messages,
 		chats,
 		onUserChoose,
-		onChatChoose
+		onChatChoose,
+		choosedChatId
 	}
 ) => {
 
@@ -50,15 +52,15 @@ const ChatBar: FC<ChatBarProps> = (
 
 
 	const getLastMessage = (chatId: number) => {
+		let resultMessage = null;
+
 		for (let i = 0; i < messages.length; i++) {
 			if (messages[i].chatId === chatId) {
-				return messages[i];
+				resultMessage = messages[i]
 			}
 		}
-		return null;
+		return resultMessage;
 	}
-
-
 
 	return (
 		<div className={classes.chatBar}>
@@ -74,6 +76,9 @@ const ChatBar: FC<ChatBarProps> = (
 							chats.map(
 								(chat: ChatResponse) => (
 									<ChatEntry
+										active={
+											chat.id==choosedChatId
+										}
 										key={chat.id}
 										onClick={
 											() => {

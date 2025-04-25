@@ -202,6 +202,7 @@ const PChat = () => {
 				chats={chats}
 				onChatChoose={(chat: ChatResponse | null) => setChoosedChat(chat)}
 				onUserChoose={(user: UserResponse | null) => setChoosedUser(user)}
+				choosedChatId={choosedChat?.id}
 			/>
 			<ChatView
 				user={choosedUser}

@@ -5,6 +5,7 @@ import {ChatResponse} from "../../../../types/schemas/chat.ts";
 import {MessageExtendedResponse} from "../../../../types/schemas/message.ts";
 import {AuthContext} from "../../../../context/contexts.tsx";
 import {useStompClient} from "react-stomp-hooks";
+import {joinStyles} from "../../../../utils/utils.ts";
 
 interface UserEntryProps {
 	firstName: string
@@ -39,6 +40,7 @@ export const UserEntry: FC<UserEntryProps> = (
 interface ChatEntryProps extends ChatResponse {
 	lastMessage: MessageExtendedResponse | null
 	onClick: () => void
+	active: boolean
 }
 
 
@@ -49,7 +51,8 @@ export const ChatEntry: FC<ChatEntryProps> = (
 		title,
 		interlocutor,
 		onClick,
-		lastMessage
+		lastMessage,
+		active
 	}
 ) => {
 	const {userId} = useContext(AuthContext)
@@ -66,6 +69,16 @@ export const ChatEntry: FC<ChatEntryProps> = (
 		}
 		result += lastMessage?.text
 		return result
+	}
+
+	const getChatEntryClasses = () => {
+		const result = [classes.chatEntry]
+
+		if (active) {
+			result.push(classes.active)
+		}
+
+		return joinStyles(...result)
 	}
 
 	const [userTyping, setUserTyping] = useState(false);
@@ -128,7 +141,7 @@ export const ChatEntry: FC<ChatEntryProps> = (
 	return (
 		<div
 			onClick={onClick}
-			className={classes.chatEntry}
+			className={getChatEntryClasses()}
 		>
 			{
 				type == "PRIVATE" &&

@@ -21,6 +21,11 @@
     background: var(--dimmed-gray);
 }
 
+.chatEntry.active {
+    background: #419FD9;
+    color: white;
+}
+
 .userInitialText {
     margin: 4px;
     flex: 1;
@@ -41,4 +46,8 @@
     margin: 4px;
     font-size: 14px;
     color: gray;
+}
+
+.chatEntry.active span {
+    color: white;
 }
