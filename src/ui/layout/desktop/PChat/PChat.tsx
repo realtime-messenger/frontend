@@ -60,6 +60,12 @@ const PChat = () => {
 			return [...prevChats, event.chat];
 		});
 
+		try {
+			console.log(event.chat.type === "PRIVATE" && event.chat.interlocutor.id === choosedUser!.id)
+		} catch (e) {
+			console.log(e)
+		}
+
 		if (event.chat.type === "PRIVATE" && event.chat.interlocutor.id === choosedUser!.id) {
 			setChoosedChat(event.chat)
 			setChoosedUser(null)

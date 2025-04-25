@@ -1,9 +1,10 @@
 import classes from './List.module.css'
-import {FC, ReactNode, useContext} from "react";
+import {FC, ReactNode, useContext, useEffect, useState} from "react";
 import AvatarPlaceholder from "../AvatarPlaceholder/AvatarPlaceholder.tsx"
 import {ChatResponse} from "../../../../types/schemas/chat.ts";
 import {MessageExtendedResponse} from "../../../../types/schemas/message.ts";
 import {AuthContext} from "../../../../context/contexts.tsx";
+import {useStompClient} from "react-stomp-hooks";
 
 interface UserEntryProps {
 	firstName: string
@@ -43,6 +44,7 @@ interface ChatEntryProps extends ChatResponse {
 
 export const ChatEntry: FC<ChatEntryProps> = (
 	{
+		id,
 		type,
 		title,
 		interlocutor,
@@ -50,8 +52,9 @@ export const ChatEntry: FC<ChatEntryProps> = (
 		lastMessage
 	}
 ) => {
-
 	const {userId} = useContext(AuthContext)
+
+	const stompClient = useStompClient();
 
 	const getSpanText = () => {
 		let result = ""
@@ -65,6 +68,63 @@ export const ChatEntry: FC<ChatEntryProps> = (
 		return result
 	}
 
+	const [userTyping, setUserTyping] = useState(false);
+
+	const [online, setOnline] = useState(false)
+
+	// ───────────────────────────────── Event Processors ─────────────────────────────────
+
+	useEffect(() => {
+		if (stompClient === undefined) {
+			return;
+		}
+
+		stompClient.subscribe(
+			"/topic/chat" + id,
+			(event) => {
+				const parsedEvent = JSON.parse(event.body)
+
+				if (parsedEvent.type === undefined) {
+					return
+				}
+				switch (parsedEvent.type) {
+					case "UserTyping":
+						console.log(parsedEvent)
+						break;
+					default:
+						console.log(parsedEvent)
+				}
+			}
+		)
+
+		if (type !== "PRIVATE") {
+			return;
+		}
+
+		stompClient.subscribe(
+			"/topic/user-online" + interlocutor.id,
+			(event) => {
+				const parsedEvent = JSON.parse(event.body)
+
+				if (parsedEvent.type === undefined) {
+					return
+				}
+
+				switch (parsedEvent.type) {
+					case "UserOnline":
+						setOnline(true)
+						break;
+					case "UserOffline":
+						setOnline(false)
+						break;
+					default:
+						console.log(parsedEvent)
+				}
+			}
+		)
+	}, [stompClient]);
+
+
 	return (
 		<div
 			onClick={onClick}
@@ -77,6 +137,7 @@ export const ChatEntry: FC<ChatEntryProps> = (
 						<AvatarPlaceholder
 							firstName={interlocutor.firstName}
 							lastName={interlocutor.lastName}
+							isOnline={online}
 						/>
 
 						<div className={classes.verticalContainer}>
@@ -87,8 +148,6 @@ export const ChatEntry: FC<ChatEntryProps> = (
 								{getSpanText()}
 							</span>
 						</div>
-
-
 					</>
 				)
 			}

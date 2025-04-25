@@ -1,6 +1,5 @@
 import {FC} from 'react';
 import classes from "./AvatarPlaceholder.module.css";
-import {ONLINE_THRESHOLD} from "../../../../config.ts";
 
 
 interface AvatarPlaceholderProps {

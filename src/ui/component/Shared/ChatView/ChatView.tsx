@@ -125,7 +125,7 @@ const Messages: FC<MessagesProps> =  (
 
 	const [messageToDelete, setMessageToDelete] = useState<MessageExtendedResponse | null>(null)
 
-	const sortedMessages = useMessageSort(messages!)
+	const sortedMessages = useMessageSort(messages)
 
 	const onReactionChoose = (reaction: string) => {
 		if (client === undefined) {
